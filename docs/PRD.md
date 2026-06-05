@@ -140,7 +140,19 @@
 
 ## 8. 관련 문서
 
+- [Cursor 설계 세션 보고서 (STEP 2)](../Report/Cursor_Design_Session_Report_STEP2.md)
+- [Cursor 설계 세션 Transcript (STEP 2)](../Prompting/Cursor_Design_Session_Transcript_STEP2.md)
 - [Mom Test 보고서 (STEP 1)](../Report/Mom_Test_Report_STEP1.md)
 - [Mom Test Transcript (STEP 1)](../Prompting/Mom_Test_Transcript_STEP1.md)
 - [Mom Test 워크북 보고서 (STEP 1)](../Report/Mom_Test_Workbook_Report_STEP1.md)
 - [Mom Test 워크북 Transcript (STEP 1)](../Prompting/Mom_Test_Workbook_Transcript_STEP1.md)
+
+## 9. Cursor TDD Command (설계 세션)
+
+| Command | 용도 |
+|---------|------|
+| `/tdd-red` | 실패 테스트 작성 (`tests/` only) |
+| `/tdd-green` | 최소 구현·REFACTOR (`src/`) |
+| `/review-ecb` | ECB·Mom Test 계약 리뷰 (수정 금지) |
+
+Rule: [`.cursorrules`](../.cursorrules) · Skill: [`.cursor/skills/unit-converter-tdd/SKILL.md`](../.cursor/skills/unit-converter-tdd/SKILL.md)

@@ -14,13 +14,32 @@
 
 **구현 목표:** 조용한 실패를 없애기 위해, 잘못된 입력마다 즉시 원인을 알려주는 검증과 정확한 길이 단위 변환을 구현한다.
 
+### 아키텍처 (ECB + Dual-Track TDD)
+
+```
+boundary (입출력) → control (검증·흐름) → entity (순수 변환)
+tests/boundary (U-*)  tests/control (D-*)  tests/entity (D-*)
+```
+
+| Cursor 산출물 | 경로 |
+|---------------|------|
+| Rule | [.cursorrules](./.cursorrules) |
+| Skill | [.cursor/skills/unit-converter-tdd/SKILL.md](./.cursor/skills/unit-converter-tdd/SKILL.md) |
+| Command RED | [.cursor/commands/tdd-red.md](./.cursor/commands/tdd-red.md) |
+| Command GREEN | [.cursor/commands/tdd-green.md](./.cursor/commands/tdd-green.md) |
+| Command Review | [.cursor/commands/review-ecb.md](./.cursor/commands/review-ecb.md) |
+
+**TDD 워크플로:** `/tdd-red` → `/tdd-green` → `/review-ecb`
+
 ### 문서
 
 | 문서 | 설명 |
 |------|------|
 | [docs/PRD.md](./docs/PRD.md) | 제품 요구사항 초안 (R-G-I-O, 성공 기준, 범위) |
+| [Report/Cursor_Design_Session_Report_STEP2.md](./Report/Cursor_Design_Session_Report_STEP2.md) | Cursor 8계층 설계 세션 보고서 (STEP 2) |
 | [Report/Mom_Test_Report_STEP1.md](./Report/Mom_Test_Report_STEP1.md) | Mom Test STEP 1 인터뷰 보고서 |
 | [Report/Mom_Test_Workbook_Report_STEP1.md](./Report/Mom_Test_Workbook_Report_STEP1.md) | Mom Test STEP 1 워크북 보고서 |
+| [Prompting/Cursor_Design_Session_Transcript_STEP2.md](./Prompting/Cursor_Design_Session_Transcript_STEP2.md) | Cursor 설계 세션 Transcript (STEP 2) |
 | [Prompting/Mom_Test_Transcript_STEP1.md](./Prompting/Mom_Test_Transcript_STEP1.md) | Mom Test STEP 1 인터뷰 Transcript |
 | [Prompting/Mom_Test_Workbook_Transcript_STEP1.md](./Prompting/Mom_Test_Workbook_Transcript_STEP1.md) | Mom Test STEP 1 워크북 Transcript |
 
@@ -36,8 +55,11 @@ venv\Scripts\activate
 # 가상환경 활성화 (macOS/Linux)
 source venv/bin/activate
 
-# 실행
+# 실행 (레거시)
 python UnitConverter.py
+
+# Dual-Track 테스트
+python -m pytest -v
 
 # 가상환경 비활성화
 deactivate
@@ -97,7 +119,9 @@ deactivate
 1. 문제 코드 및 기본 요구사항 분석 (0.5시간)
    - 기본 코드구조, 로직 이해
    - Mom Test 인터뷰 및 PRD 초안 작성
+   - Cursor 설계 (Rule, Skill, Command, ECB Harness)
 2. 기본 요구사항 및 품질 요구사항 구현 (2시간)
+   - `/tdd-red` → `/tdd-green` → `/review-ecb` Dual-Track TDD
    - OCP를 만족하는 인터페이스 구현
    - SRP를 만족하도록 클래스 구현
    - 입력값 검증을 위한 구현
