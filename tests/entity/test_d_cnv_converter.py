@@ -51,3 +51,16 @@ def test_d_cnv_03_convert_all_feet_to_yard_via_meter():
     assert result["meter"] == pytest.approx(meters, rel=1e-5)
     assert result["feet"] == pytest.approx(value, rel=1e-5)
     assert result["yard"] == pytest.approx(expected_yard, rel=1e-5)
+
+
+def test_to_meter_unsupported_unit():
+    """to_meter: 미지원 단위 inch → ValueError (validate와 동일 도메인 예외)."""
+    # Given: 미지원 단위 inch
+    value = 1.0
+    unit = "inch"
+
+    # When / Then: to_meter — KeyError 대신 구체적 ValueError
+    from src.entity.converter import to_meter
+
+    with pytest.raises(ValueError, match="Unsupported unit: inch"):
+        to_meter(value, unit)

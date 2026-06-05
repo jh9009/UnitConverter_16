@@ -48,14 +48,15 @@ tests/boundary (U-*)  tests/control (D-*)  tests/entity (D-*)
 | 2 | ECB Harness · `.cursorrules` · Skill · Command×3 | ✅ |
 | 3 | Entity Logic RED (D-CNV/D-VAL 스켈레톤) | ✅ |
 | 4 | Entity GREEN (`src/entity/` · D-CNV/D-VAL PASS 5/5) | ✅ |
-| — | Entity REFACTOR · Control RED/GREEN · Boundary(U-*) · Golden Master · ECB 연동 | ⏳ |
+| 5 | Entity REFACTOR (UNIT_* SSOT · `to_meter` ValueError · PASS 6/6) | ✅ |
+| — | Control RED/GREEN · Boundary(U-*) · Golden Master · ECB 연동 | ⏳ |
 
 ### TDD Todo (권장 순서: entity → control → boundary)
 
 - [x] STEP 2 Harness 골격 (`src/`, `tests/`, `pyproject.toml`)
 - [x] Entity RED — D-CNV-01~03, D-VAL-01~02 (`tests/entity/test_d_*.py`)
 - [x] Entity GREEN — `constants.py`, `converter.py`, `validator.py` + Then assert (PASS 5/5)
-- [ ] Entity REFACTOR — OCP/SRP·ECB 정리 (동작 불변)
+- [x] Entity REFACTOR — UNIT_* SSOT · `to_meter` 도메인 `ValueError` · `test_to_meter_unsupported_unit` (PASS 6/6)
 - [ ] Control RED/GREEN — E001/E002/E003 매핑
 - [ ] Boundary RED/GREEN — U-* CLI·I/O
 - [ ] Golden Master — ECB 연동 후 E2E 출력 스냅샷 (`tests/golden/`, GM-*)
@@ -63,14 +64,14 @@ tests/boundary (U-*)  tests/control (D-*)  tests/entity (D-*)
 
 | Layer | RED | GREEN | REFACTOR |
 |-------|-----|-------|----------|
-| Entity | ✅ | ✅ | ⏳ |
+| Entity | ✅ | ✅ | ✅ |
 | Control | ⏳ | ⏳ | ⏳ |
 | Boundary | ⏳ | ⏳ | ⏳ |
 
-**다음 작업:** Entity REFACTOR 또는 Control RED (`/tdd-red`)
+**다음 작업:** Control RED (`/tdd-red`) 또는 Entity `/review-ecb`
 
 ```bash
-# Entity GREEN 확인 (PASS 5/5)
+# Entity REFACTOR 완료 확인 (PASS 6/6)
 pytest tests/entity/ -v
 
 # REPL 스모크 (PRD 수치 대조)
@@ -82,11 +83,13 @@ python -c "from src.entity.converter import convert_all; print(convert_all(2.5, 
 | 문서 | 설명 |
 |------|------|
 | [docs/PRD.md](./docs/PRD.md) | 제품 요구사항·Test ID 정의 (진행 현황은 본 README) |
+| [Report/Entity_TDD_REFACTOR_Session_Report_STEP5.md](./Report/Entity_TDD_REFACTOR_Session_Report_STEP5.md) | Entity TDD REFACTOR 세션 보고서 (STEP 5) |
 | [Report/Entity_TDD_GREEN_Session_Report_STEP4.md](./Report/Entity_TDD_GREEN_Session_Report_STEP4.md) | Entity TDD GREEN 세션 보고서 (STEP 4) |
 | [Report/Entity_TDD_RED_Session_Report_STEP3.md](./Report/Entity_TDD_RED_Session_Report_STEP3.md) | Entity TDD RED 세션 보고서 (STEP 3) |
 | [Report/Cursor_Design_Session_Report_STEP2.md](./Report/Cursor_Design_Session_Report_STEP2.md) | Cursor 8계층 설계 세션 보고서 (STEP 2) |
 | [Report/Mom_Test_Report_STEP1.md](./Report/Mom_Test_Report_STEP1.md) | Mom Test STEP 1 인터뷰 보고서 |
 | [Report/Mom_Test_Workbook_Report_STEP1.md](./Report/Mom_Test_Workbook_Report_STEP1.md) | Mom Test STEP 1 워크북 보고서 |
+| [Prompting/Entity_TDD_REFACTOR_Session_Transcript_STEP5.md](./Prompting/Entity_TDD_REFACTOR_Session_Transcript_STEP5.md) | Entity TDD REFACTOR Transcript (STEP 5) |
 | [Prompting/Entity_TDD_GREEN_Session_Transcript_STEP4.md](./Prompting/Entity_TDD_GREEN_Session_Transcript_STEP4.md) | Entity TDD GREEN Transcript (STEP 4) |
 | [Prompting/Entity_TDD_RED_Session_Transcript_STEP3.md](./Prompting/Entity_TDD_RED_Session_Transcript_STEP3.md) | Entity TDD RED Transcript (STEP 3) |
 | [Prompting/Cursor_Design_Session_Transcript_STEP2.md](./Prompting/Cursor_Design_Session_Transcript_STEP2.md) | Cursor 설계 세션 Transcript (STEP 2) |
@@ -169,9 +172,9 @@ deactivate
 | # | Activity | 상태 | 비고 |
 |---|----------|------|------|
 | 1 | 문제 코드·요구사항 분석 (0.5h) | ✅ | Mom Test STEP 1, PRD, STEP 2 Cursor 설계 |
-| 2 | 기본·품질 요구 구현 (2h) | △ | Entity GREEN 완료; Control·Boundary·ECB 연동 남음 |
-| 3 | TC 구현 (0.5h) | △ | Entity D-* PASS 5/5; U-*·Golden Master 미착수 |
+| 2 | 기본·품질 요구 구현 (2h) | △ | Entity Layer 완료; Control·Boundary·ECB 연동 남음 |
+| 3 | TC 구현 (0.5h) | △ | Entity PASS 6/6 (D-* + REFACTOR TC); U-*·Golden Master 미착수 |
 | 4 | 추가 요구 구현 (2h) | ⏳ | Out of Scope 항목 — [PRD §4.3](./docs/PRD.md) |
-| 5 | 회고 및 발표 (1h) | △ | Report·Prompting STEP 1~4 기록 |
+| 5 | 회고 및 발표 (1h) | △ | Report·Prompting STEP 1~5 기록 |
 
 상세 세션 기록: [Report/](./Report/) · [Prompting/](./Prompting/)
