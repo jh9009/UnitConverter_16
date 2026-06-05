@@ -1,8 +1,19 @@
 # UnitConverter_16 — PRD (Product Requirements Document)
 
-**버전:** 0.1 (초안)  
+**버전:** 0.2 (초안)  
 **일자:** 2026-06-05  
-**근거:** Mom Test STEP 1 인터뷰 · STEP 1 워크북
+**근거:** Mom Test STEP 1 인터뷰 · STEP 1 워크북 · STEP 2~3 TDD
+
+---
+
+## 0. 문서 역할 (README와의 분리)
+
+| 문서 | 역할 |
+|------|------|
+| **본 PRD** | 요구 **계약** — 페르소나, R-G-I-O, FR/SC, Test ID **정의**, In/Out of Scope |
+| **[README](../README.md)** | repo **진입** — 실행법, Harness 요약, **STEP·TDD 진행 todo**, pytest 스냅샷 |
+
+진행 상태(RED/GREEN 완료 여부)는 README를 SSOT로 한다. 본 문서 §8은 Test ID가 **무엇을 검증해야 하는지**만 정의한다.
 
 ---
 
@@ -138,36 +149,38 @@
 
 ---
 
-## 8. TDD 구현 진행 (STEP 3 — Entity RED)
+## 8. Test ID 추적표 (요구 정의)
 
-**Phase:** `RED | Layer: Entity | Track: Logic`  
-**상태:** RED 스켈레톤 완료 · GREEN 대기
+> **진행 현황:** [README § 프로젝트 진행](../README.md) · TDD Todo
 
-### 8.1 Entity 테스트 ID (Logic Track)
+### 8.1 Entity — Logic Track (`tests/entity/`, `D-*`)
 
-| ID | 파일 | 대상 | 시나리오 | RED 상태 |
-|----|------|------|----------|----------|
-| D-CNV-01 | `tests/entity/test_d_cnv_converter.py` | `to_meter` | 1 feet → 0.3048 m (±ε) | FAIL (`ModuleNotFoundError`) |
-| D-CNV-02 | 동일 | `convert_all` | 2.5 m → 8.20210 ft | FAIL |
-| D-CNV-03 | 동일 | `convert_all` | feet→yard meter 경유 일관성 | FAIL |
-| D-VAL-01 | `tests/entity/test_d_val_validator.py` | `validate` | `inch` 거부 | FAIL |
-| D-VAL-02 | 동일 | `validate` | `-1` 거부 | FAIL |
+| ID | 테스트 파일 | 대상 | Given → Then (검증 의도) | FR/SC 연결 |
+|----|-------------|------|--------------------------|------------|
+| D-CNV-01 | `test_d_cnv_converter.py` | `to_meter` | 1 feet → 0.3048 m (±ε, SSOT) | FR-1 |
+| D-CNV-02 | 동일 | `convert_all` | 2.5 m → feet 8.20210 (5 decimals) | FR-1 |
+| D-CNV-03 | 동일 | `convert_all` | feet→yard, meter 경유 일관성 | FR-1 |
+| D-VAL-01 | `test_d_val_validator.py` | `validate` | `inch` → 도메인 거부 (control→E002) | FR-3, SC-2 |
+| D-VAL-02 | 동일 | `validate` | `-1` → 도메인 거부 (control→E003) | FR-3, SC-2 |
 
-### 8.2 GREEN 예정 `src/entity/`
+**Entity 구현 모듈 (GREEN):** `src/entity/constants.py` (SSOT) · `converter.py` · `validator.py` — E00x 문자열·I/O 없음.
 
-| 모듈 | 책임 |
-|------|------|
-| `constants.py` | SSOT: `1 m = 3.28084 ft`, `1 m = 1.09361 yd` |
-| `converter.py` | `to_meter`, `convert_all` (순수 변환) |
-| `validator.py` | `validate` (미지원 단위·음수 도메인 거부, E00x 문자열 없음) |
+### 8.2 Control — Logic Track (예정, `tests/control/`)
 
-### 8.3 Layer별 Loop 상태
+| ID (예정) | 검증 의도 | FR/SC |
+|-----------|-----------|-------|
+| D-CTL-* | E001 파싱·형식 오류 매핑 | FR-2, SC-1 |
+| D-CTL-* | E002 미지원 단위 매핑 | FR-3, SC-2 |
+| D-CTL-* | E003 음수 매핑 | FR-3, SC-2 |
 
-| Layer | RED | GREEN |
-|-------|-----|-------|
-| Entity | ✅ STEP 3 | ⏳ |
-| Control | ⏳ | ⏳ |
-| Boundary | ⏳ | ⏳ |
+### 8.3 Boundary — UI Track (예정, `tests/boundary/`, `U-*`)
+
+| ID (예정) | 검증 의도 | FR/SC |
+|-----------|-----------|-------|
+| U-* | 터미널 I/O·`[코드]+설명+input` 출력 | FR-2, FR-3, SC-1, SC-2 |
+| U-* | 조용한 실패·`Done.` 등 성공 위장 없음 | SC-1 |
+
+**권장 TDD 순서:** entity (D-CNV/D-VAL) → control → boundary (U-*)
 
 ---
 
