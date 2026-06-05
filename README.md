@@ -29,16 +29,31 @@ tests/boundary (U-*)  tests/control (D-*)  tests/entity (D-*)
 | Command GREEN | [.cursor/commands/tdd-green.md](./.cursor/commands/tdd-green.md) |
 | Command Review | [.cursor/commands/review-ecb.md](./.cursor/commands/review-ecb.md) |
 
-**TDD 워크플로:** `/tdd-red` → `/tdd-green` → `/review-ecb`
+**TDD 워크플로:** `/tdd-red` → `/red-skeleton` → `/tdd-green` → `/review-ecb`
+
+### TDD 진행 상태 (STEP 3)
+
+| Layer | RED | GREEN |
+|-------|-----|-------|
+| Entity (`tests/entity/`) | ✅ D-CNV-01~03, D-VAL-01~02 스켈레톤 | ⏳ 다음 |
+| Control | ⏳ | ⏳ |
+| Boundary | ⏳ | ⏳ |
+
+```bash
+# Entity RED 확인 (현재: 5 failed — ModuleNotFoundError, 의도적)
+pytest tests/entity/ -v
+```
 
 ### 문서
 
 | 문서 | 설명 |
 |------|------|
 | [docs/PRD.md](./docs/PRD.md) | 제품 요구사항 초안 (R-G-I-O, 성공 기준, 범위) |
+| [Report/Entity_TDD_RED_Session_Report_STEP3.md](./Report/Entity_TDD_RED_Session_Report_STEP3.md) | Entity TDD RED 세션 보고서 (STEP 3) |
 | [Report/Cursor_Design_Session_Report_STEP2.md](./Report/Cursor_Design_Session_Report_STEP2.md) | Cursor 8계층 설계 세션 보고서 (STEP 2) |
 | [Report/Mom_Test_Report_STEP1.md](./Report/Mom_Test_Report_STEP1.md) | Mom Test STEP 1 인터뷰 보고서 |
 | [Report/Mom_Test_Workbook_Report_STEP1.md](./Report/Mom_Test_Workbook_Report_STEP1.md) | Mom Test STEP 1 워크북 보고서 |
+| [Prompting/Entity_TDD_RED_Session_Transcript_STEP3.md](./Prompting/Entity_TDD_RED_Session_Transcript_STEP3.md) | Entity TDD RED Transcript (STEP 3) |
 | [Prompting/Cursor_Design_Session_Transcript_STEP2.md](./Prompting/Cursor_Design_Session_Transcript_STEP2.md) | Cursor 설계 세션 Transcript (STEP 2) |
 | [Prompting/Mom_Test_Transcript_STEP1.md](./Prompting/Mom_Test_Transcript_STEP1.md) | Mom Test STEP 1 인터뷰 Transcript |
 | [Prompting/Mom_Test_Workbook_Transcript_STEP1.md](./Prompting/Mom_Test_Workbook_Transcript_STEP1.md) | Mom Test STEP 1 워크북 Transcript |

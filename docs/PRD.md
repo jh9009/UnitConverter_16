@@ -138,8 +138,43 @@
 
 ---
 
-## 8. 관련 문서
+## 8. TDD 구현 진행 (STEP 3 — Entity RED)
 
+**Phase:** `RED | Layer: Entity | Track: Logic`  
+**상태:** RED 스켈레톤 완료 · GREEN 대기
+
+### 8.1 Entity 테스트 ID (Logic Track)
+
+| ID | 파일 | 대상 | 시나리오 | RED 상태 |
+|----|------|------|----------|----------|
+| D-CNV-01 | `tests/entity/test_d_cnv_converter.py` | `to_meter` | 1 feet → 0.3048 m (±ε) | FAIL (`ModuleNotFoundError`) |
+| D-CNV-02 | 동일 | `convert_all` | 2.5 m → 8.20210 ft | FAIL |
+| D-CNV-03 | 동일 | `convert_all` | feet→yard meter 경유 일관성 | FAIL |
+| D-VAL-01 | `tests/entity/test_d_val_validator.py` | `validate` | `inch` 거부 | FAIL |
+| D-VAL-02 | 동일 | `validate` | `-1` 거부 | FAIL |
+
+### 8.2 GREEN 예정 `src/entity/`
+
+| 모듈 | 책임 |
+|------|------|
+| `constants.py` | SSOT: `1 m = 3.28084 ft`, `1 m = 1.09361 yd` |
+| `converter.py` | `to_meter`, `convert_all` (순수 변환) |
+| `validator.py` | `validate` (미지원 단위·음수 도메인 거부, E00x 문자열 없음) |
+
+### 8.3 Layer별 Loop 상태
+
+| Layer | RED | GREEN |
+|-------|-----|-------|
+| Entity | ✅ STEP 3 | ⏳ |
+| Control | ⏳ | ⏳ |
+| Boundary | ⏳ | ⏳ |
+
+---
+
+## 9. 관련 문서
+
+- [Entity TDD RED 보고서 (STEP 3)](../Report/Entity_TDD_RED_Session_Report_STEP3.md)
+- [Entity TDD RED Transcript (STEP 3)](../Prompting/Entity_TDD_RED_Session_Transcript_STEP3.md)
 - [Cursor 설계 세션 보고서 (STEP 2)](../Report/Cursor_Design_Session_Report_STEP2.md)
 - [Cursor 설계 세션 Transcript (STEP 2)](../Prompting/Cursor_Design_Session_Transcript_STEP2.md)
 - [Mom Test 보고서 (STEP 1)](../Report/Mom_Test_Report_STEP1.md)
@@ -147,11 +182,12 @@
 - [Mom Test 워크북 보고서 (STEP 1)](../Report/Mom_Test_Workbook_Report_STEP1.md)
 - [Mom Test 워크북 Transcript (STEP 1)](../Prompting/Mom_Test_Workbook_Transcript_STEP1.md)
 
-## 9. Cursor TDD Command (설계 세션)
+## 10. Cursor TDD Command (설계 세션)
 
 | Command | 용도 |
 |---------|------|
-| `/tdd-red` | 실패 테스트 작성 (`tests/` only) |
+| `/tdd-red` | 실패 테스트 설계·ID 확정 (`tests/` only) |
+| `/red-skeleton` | RED 스켈레톤 작성 (`pytest.fail`, `src/` 금지) |
 | `/tdd-green` | 최소 구현·REFACTOR (`src/`) |
 | `/review-ecb` | ECB·Mom Test 계약 리뷰 (수정 금지) |
 
