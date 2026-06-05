@@ -1,8 +1,8 @@
 # UnitConverter_16 — PRD (Product Requirements Document)
 
-**버전:** 0.3 (초안)  
+**버전:** 0.4 (초안)  
 **일자:** 2026-06-05  
-**근거:** Mom Test STEP 1 인터뷰 · STEP 1 워크북 · STEP 2~4 TDD (Entity GREEN 완료)
+**근거:** Mom Test STEP 1 인터뷰 · STEP 1 워크북 · STEP 2~5 TDD (Entity Layer RED/GREEN/REFACTOR 완료)
 
 ---
 
@@ -160,20 +160,27 @@
 | D-CNV-01 | `test_d_cnv_converter.py` | `to_meter` | 1 feet → 0.3048 m (±ε, SSOT) | FR-1 |
 | D-CNV-02 | 동일 | `convert_all` | 2.5 m → feet 8.20210 (5 decimals) | FR-1 |
 | D-CNV-03 | 동일 | `convert_all` | feet→yard, meter 경유 일관성 | FR-1 |
+| *(REFACTOR)* | `test_d_cnv_converter.py` | `to_meter` | `inch` → `ValueError` (`Unsupported unit: inch`) | FR-3, SC-2 |
 | D-VAL-01 | `test_d_val_validator.py` | `validate` | `inch` → 도메인 거부 (control→E002) | FR-3, SC-2 |
 | D-VAL-02 | 동일 | `validate` | `-1` → 도메인 거부 (control→E003) | FR-3, SC-2 |
 
-**Entity 구현 모듈 (GREEN — STEP 4 완료):**
+**Entity 구현 모듈 (GREEN STEP 4 · REFACTOR STEP 5):**
 
 | 모듈 | 책임 |
 |------|------|
-| `src/entity/constants.py` | SSOT (`FEET_PER_METER`, `YARDS_PER_METER` 및 역산) |
-| `src/entity/converter.py` | `to_meter`, `convert_all` |
+| `src/entity/constants.py` | SSOT — 비율(`FEET_PER_METER` 등) + 단위 식별자(`UNIT_*`, `ALL_UNITS`) |
+| `src/entity/converter.py` | `to_meter`, `convert_all` — 미지원 단위 시 `ValueError` (KeyError 금지) |
 | `src/entity/validator.py` | `validate` — 도메인 `ValueError` (E00x 문자열 없음) |
 
 **Harness·import (STEP 4):** `tests/entity/` 디렉터리명과 `entity` 패키지 충돌 회피 — `pyproject.toml` `pythonpath = ["."]`, 테스트·REPL은 `from src.entity.*`.
 
-**GREEN assert 규약:** CNV → `pytest.approx(..., rel=1e-5)` · VAL → `pytest.raises(ValueError, match=...)`.
+**assert 규약:** CNV → `pytest.approx(..., rel=1e-5)` · VAL/REFACTOR → `pytest.raises(ValueError, match=...)`.
+
+**REFACTOR (STEP 5) 계약:**
+
+- `to_meter`·`validate` 미지원 단위 메시지: `Unsupported unit: {unit}` (동일 형식)
+- `converter` dict 키·`_TO_METER_FACTORS`는 `UNIT_*` SSOT 참조 (Primitive Obsession 해소)
+- **잔여 (선택):** `validator.SUPPORTED_UNITS` → `ALL_UNITS` 연동
 
 ### 8.2 Control — Logic Track (예정, `tests/control/`)
 
@@ -206,6 +213,8 @@
 
 ## 9. 관련 문서
 
+- [Entity TDD REFACTOR 보고서 (STEP 5)](../Report/Entity_TDD_REFACTOR_Session_Report_STEP5.md)
+- [Entity TDD REFACTOR Transcript (STEP 5)](../Prompting/Entity_TDD_REFACTOR_Session_Transcript_STEP5.md)
 - [Entity TDD GREEN 보고서 (STEP 4)](../Report/Entity_TDD_GREEN_Session_Report_STEP4.md)
 - [Entity TDD GREEN Transcript (STEP 4)](../Prompting/Entity_TDD_GREEN_Session_Transcript_STEP4.md)
 - [Entity TDD RED 보고서 (STEP 3)](../Report/Entity_TDD_RED_Session_Report_STEP3.md)
