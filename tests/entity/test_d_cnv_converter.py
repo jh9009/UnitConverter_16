@@ -1,4 +1,4 @@
-"""Entity converter — Logic Track RED skeleton (D-CNV-01~03)."""
+"""Entity converter — Logic Track (D-CNV-01~03)."""
 
 import pytest
 
@@ -10,14 +10,12 @@ def test_d_cnv_01_to_meter_one_feet():
     unit = "feet"
 
     # When: to_meter(value, unit) — SSOT 상수에서 비율 로드 후 미터 환산
-    from src.entity.constants import METERS_PER_FOOT
     from src.entity.converter import to_meter
 
-    _ = METERS_PER_FOOT
-    _ = to_meter(value, unit)
+    result = to_meter(value, unit)
 
     # Then:
-    pytest.fail("RED: D-CNV-01 — 구현 없음, 의도적 실패")
+    assert result == pytest.approx(0.3048, rel=1e-5)
 
 
 def test_d_cnv_02_convert_all_meter_to_feet():
@@ -27,14 +25,12 @@ def test_d_cnv_02_convert_all_meter_to_feet():
     unit = "meter"
 
     # When: convert_all(value, unit) — meter·feet·yard 일괄 변환
-    from src.entity.constants import METERS_PER_FOOT
     from src.entity.converter import convert_all
 
-    _ = METERS_PER_FOOT
-    _ = convert_all(value, unit)
+    result = convert_all(value, unit)
 
     # Then:
-    pytest.fail("RED: D-CNV-02 — 구현 없음, 의도적 실패")
+    assert result["feet"] == pytest.approx(8.20210, rel=1e-5)
 
 
 def test_d_cnv_03_convert_all_feet_to_yard_via_meter():
@@ -47,9 +43,11 @@ def test_d_cnv_03_convert_all_feet_to_yard_via_meter():
     from src.entity.constants import METERS_PER_FOOT, METERS_PER_YARD
     from src.entity.converter import convert_all
 
-    _ = METERS_PER_FOOT
-    _ = METERS_PER_YARD
-    _ = convert_all(value, unit)
+    result = convert_all(value, unit)
+    meters = value * METERS_PER_FOOT
+    expected_yard = meters / METERS_PER_YARD
 
     # Then:
-    pytest.fail("RED: D-CNV-03 — 구현 없음, 의도적 실패")
+    assert result["meter"] == pytest.approx(meters, rel=1e-5)
+    assert result["feet"] == pytest.approx(value, rel=1e-5)
+    assert result["yard"] == pytest.approx(expected_yard, rel=1e-5)

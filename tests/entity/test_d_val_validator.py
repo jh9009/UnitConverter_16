@@ -1,4 +1,4 @@
-"""Entity validator — Logic Track RED skeleton (D-VAL-01~02)."""
+"""Entity validator — Logic Track (D-VAL-01~02)."""
 
 import pytest
 
@@ -9,13 +9,11 @@ def test_d_val_01_reject_unsupported_unit_inch():
     unit = "inch"
     value = 1.0
 
-    # When: validate(unit, value) — 지원 단위(meter, feet, yard) 외 거부
+    # When / Then: validate(unit, value) — 지원 단위(meter, feet, yard) 외 거부
     from src.entity.validator import validate
 
-    _ = validate(unit, value)
-
-    # Then:
-    pytest.fail("RED: D-VAL-01 — 구현 없음, 의도적 실패")
+    with pytest.raises(ValueError, match="Unsupported unit: inch"):
+        validate(unit, value)
 
 
 def test_d_val_02_reject_negative_value():
@@ -24,10 +22,8 @@ def test_d_val_02_reject_negative_value():
     unit = "meter"
     value = -1.0
 
-    # When: validate(unit, value) — 음수 입력 거부
+    # When / Then: validate(unit, value) — 음수 입력 거부
     from src.entity.validator import validate
 
-    _ = validate(unit, value)
-
-    # Then:
-    pytest.fail("RED: D-VAL-02 — 구현 없음, 의도적 실패")
+    with pytest.raises(ValueError, match="Value must not be negative"):
+        validate(unit, value)
