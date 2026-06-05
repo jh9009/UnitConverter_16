@@ -1,0 +1,7 @@
+"""SSOT length conversion ratios (meter as base unit)."""
+
+FEET_PER_METER = 3.28084
+YARDS_PER_METER = 1.09361
+
+METERS_PER_FOOT = 1 / FEET_PER_METER
+METERS_PER_YARD = 1 / YARDS_PER_METER

@@ -1,8 +1,8 @@
 # UnitConverter_16 — PRD (Product Requirements Document)
 
-**버전:** 0.2 (초안)  
+**버전:** 0.3 (초안)  
 **일자:** 2026-06-05  
-**근거:** Mom Test STEP 1 인터뷰 · STEP 1 워크북 · STEP 2~3 TDD
+**근거:** Mom Test STEP 1 인터뷰 · STEP 1 워크북 · STEP 2~4 TDD (Entity GREEN 완료)
 
 ---
 
@@ -163,7 +163,17 @@
 | D-VAL-01 | `test_d_val_validator.py` | `validate` | `inch` → 도메인 거부 (control→E002) | FR-3, SC-2 |
 | D-VAL-02 | 동일 | `validate` | `-1` → 도메인 거부 (control→E003) | FR-3, SC-2 |
 
-**Entity 구현 모듈 (GREEN):** `src/entity/constants.py` (SSOT) · `converter.py` · `validator.py` — E00x 문자열·I/O 없음.
+**Entity 구현 모듈 (GREEN — STEP 4 완료):**
+
+| 모듈 | 책임 |
+|------|------|
+| `src/entity/constants.py` | SSOT (`FEET_PER_METER`, `YARDS_PER_METER` 및 역산) |
+| `src/entity/converter.py` | `to_meter`, `convert_all` |
+| `src/entity/validator.py` | `validate` — 도메인 `ValueError` (E00x 문자열 없음) |
+
+**Harness·import (STEP 4):** `tests/entity/` 디렉터리명과 `entity` 패키지 충돌 회피 — `pyproject.toml` `pythonpath = ["."]`, 테스트·REPL은 `from src.entity.*`.
+
+**GREEN assert 규약:** CNV → `pytest.approx(..., rel=1e-5)` · VAL → `pytest.raises(ValueError, match=...)`.
 
 ### 8.2 Control — Logic Track (예정, `tests/control/`)
 
@@ -182,10 +192,22 @@
 
 **권장 TDD 순서:** entity (D-CNV/D-VAL) → control → boundary (U-*)
 
+### 8.4 Golden Master / E2E (예정 — Entity 범위 외)
+
+> **진행:** Boundary GREEN + `UnitConverter.py` ECB 연동 **이후**. Entity Logic Track에서는 수행하지 않음.
+
+| ID (예정) | 위치 (예정) | 검증 의도 | FR/SC |
+|-----------|-------------|-----------|-------|
+| GM-01 | `tests/golden/` | `meter:2.5` 정상 CLI 출력 전체 스냅샷 | FR-1, SC-3 |
+| GM-02 | 동일 | `feet 5.8` → E001 메시지 전체 | FR-2, SC-1 |
+| GM-03 | 동일 | `inch:1.0` → E002 메시지 전체 | FR-3, SC-2 |
+
 ---
 
 ## 9. 관련 문서
 
+- [Entity TDD GREEN 보고서 (STEP 4)](../Report/Entity_TDD_GREEN_Session_Report_STEP4.md)
+- [Entity TDD GREEN Transcript (STEP 4)](../Prompting/Entity_TDD_GREEN_Session_Transcript_STEP4.md)
 - [Entity TDD RED 보고서 (STEP 3)](../Report/Entity_TDD_RED_Session_Report_STEP3.md)
 - [Entity TDD RED Transcript (STEP 3)](../Prompting/Entity_TDD_RED_Session_Transcript_STEP3.md)
 - [Cursor 설계 세션 보고서 (STEP 2)](../Report/Cursor_Design_Session_Report_STEP2.md)
