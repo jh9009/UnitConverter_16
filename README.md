@@ -29,16 +29,60 @@ tests/boundary (U-*)  tests/control (D-*)  tests/entity (D-*)
 | Command GREEN | [.cursor/commands/tdd-green.md](./.cursor/commands/tdd-green.md) |
 | Command Review | [.cursor/commands/review-ecb.md](./.cursor/commands/review-ecb.md) |
 
-**TDD 워크플로:** `/tdd-red` → `/tdd-green` → `/review-ecb`
+**TDD 워크플로:** `/tdd-red` → `/red-skeleton` → `/tdd-green` → `/review-ecb`
+
+**Harness 골격 (STEP 2):** `pyproject.toml` · `src/{entity,control,boundary}/` · `tests/{entity,control,boundary}/` · 레거시 [`UnitConverter.py`](./UnitConverter.py) (ECB 미연동)
+
+### 문서 역할
+
+| 문서 | 역할 |
+|------|------|
+| **README** (본 문서) | 진입·실행·**진행 todo**·문서 링크 |
+| **[docs/PRD.md](./docs/PRD.md)** | 요구 계약 — R-G-I-O, FR/SC, Test ID 정의, 범위 (진행 스냅샷은 README) |
+
+### 프로젝트 진행 (STEP)
+
+| STEP | 내용 | 상태 |
+|------|------|------|
+| 1 | Mom Test · 워크북(8/10) · PRD 초안 | ✅ |
+| 2 | ECB Harness · `.cursorrules` · Skill · Command×3 | ✅ |
+| 3 | Entity Logic RED (D-CNV/D-VAL 스켈레톤) | ✅ |
+| 3 | Entity GREEN (`src/entity/`) | ⏳ **다음** |
+| — | Control RED/GREEN · Boundary(U-*) · `UnitConverter.py` ECB 연동 | ⏳ |
+
+### TDD Todo (권장 순서: entity → control → boundary)
+
+- [x] STEP 2 Harness 골격 (`src/`, `tests/`, `pyproject.toml`)
+- [x] Entity RED — D-CNV-01~03, D-VAL-01~02 (`tests/entity/test_d_*.py`)
+- [ ] Entity GREEN — `constants.py`, `converter.py`, `validator.py` + Then assert
+- [ ] Entity REFACTOR
+- [ ] Control RED/GREEN — E001/E002/E003 매핑
+- [ ] Boundary RED/GREEN — U-* CLI·I/O
+- [ ] `/review-ecb` — Mom Test SC-1~3 회귀 확인
+
+| Layer | RED | GREEN | REFACTOR |
+|-------|-----|-------|----------|
+| Entity | ✅ | ⏳ | ⏳ |
+| Control | ⏳ | ⏳ | ⏳ |
+| Boundary | ⏳ | ⏳ | ⏳ |
+
+**다음 작업:** `Phase: GREEN | Layer: Entity` — `/tdd-green`
+
+```bash
+# Entity RED 확인 (의도적 FAIL — ModuleNotFoundError)
+pytest tests/entity/ -v
+```
 
 ### 문서
 
 | 문서 | 설명 |
 |------|------|
-| [docs/PRD.md](./docs/PRD.md) | 제품 요구사항 초안 (R-G-I-O, 성공 기준, 범위) |
+| [docs/PRD.md](./docs/PRD.md) | 제품 요구사항·Test ID 정의 (진행 현황은 본 README) |
+| [Report/Entity_TDD_RED_Session_Report_STEP3.md](./Report/Entity_TDD_RED_Session_Report_STEP3.md) | Entity TDD RED 세션 보고서 (STEP 3) |
 | [Report/Cursor_Design_Session_Report_STEP2.md](./Report/Cursor_Design_Session_Report_STEP2.md) | Cursor 8계층 설계 세션 보고서 (STEP 2) |
 | [Report/Mom_Test_Report_STEP1.md](./Report/Mom_Test_Report_STEP1.md) | Mom Test STEP 1 인터뷰 보고서 |
 | [Report/Mom_Test_Workbook_Report_STEP1.md](./Report/Mom_Test_Workbook_Report_STEP1.md) | Mom Test STEP 1 워크북 보고서 |
+| [Prompting/Entity_TDD_RED_Session_Transcript_STEP3.md](./Prompting/Entity_TDD_RED_Session_Transcript_STEP3.md) | Entity TDD RED Transcript (STEP 3) |
 | [Prompting/Cursor_Design_Session_Transcript_STEP2.md](./Prompting/Cursor_Design_Session_Transcript_STEP2.md) | Cursor 설계 세션 Transcript (STEP 2) |
 | [Prompting/Mom_Test_Transcript_STEP1.md](./Prompting/Mom_Test_Transcript_STEP1.md) | Mom Test STEP 1 인터뷰 Transcript |
 | [Prompting/Mom_Test_Workbook_Transcript_STEP1.md](./Prompting/Mom_Test_Workbook_Transcript_STEP1.md) | Mom Test STEP 1 워크북 Transcript |
@@ -116,21 +160,12 @@ deactivate
 
 ## 생성형AI를 활용한 Activities (6 시간)
 
-1. 문제 코드 및 기본 요구사항 분석 (0.5시간)
-   - 기본 코드구조, 로직 이해
-   - Mom Test 인터뷰 및 PRD 초안 작성
-   - Cursor 설계 (Rule, Skill, Command, ECB Harness)
-2. 기본 요구사항 및 품질 요구사항 구현 (2시간)
-   - `/tdd-red` → `/tdd-green` → `/review-ecb` Dual-Track TDD
-   - OCP를 만족하는 인터페이스 구현
-   - SRP를 만족하도록 클래스 구현
-   - 입력값 검증을 위한 구현
-3. TC 구현 (0.5시간)
-   - 단위변환 기능 검증 및 입력 값 검증 TC 작성
-4. 추가 요구사항 구현 (2시간)
-   - 3개 요구사항 구현 및 TC 작성
-5. 회고 및 발표 (1시간)
-   - 실습 목표와 달성도
-   - AI를 어떻게 활용했나? 도움이 된 순간과 한계는?
-   - TC를 추가보면서 개선에 미친 영향, TC 작성 팁
-   - 클린코드와 리팩토링에서 느낀 장점과 어려운점
+| # | Activity | 상태 | 비고 |
+|---|----------|------|------|
+| 1 | 문제 코드·요구사항 분석 (0.5h) | ✅ | Mom Test STEP 1, PRD, STEP 2 Cursor 설계 |
+| 2 | 기본·품질 요구 구현 (2h) | ⏳ | Entity GREEN부터 (`/tdd-green`) |
+| 3 | TC 구현 (0.5h) | △ | Entity RED 스켈레톤 5건; PASS·U-* 미착수 |
+| 4 | 추가 요구 구현 (2h) | ⏳ | Out of Scope 항목 — [PRD §4.3](./docs/PRD.md) |
+| 5 | 회고 및 발표 (1h) | △ | Report·Prompting STEP 1~3 기록 |
+
+상세 세션 기록: [Report/](./Report/) · [Prompting/](./Prompting/)
