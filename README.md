@@ -1,12 +1,31 @@
 
 ## Unit Converter (Python)
 ![unit-converter](./unit-converter.jpg)
+
 ### Overview
+
 - 사용자가 입력한 길이(`단위:값`)를 기반으로, 해당 값을 다른 모든 단위로 변환해 출력하는 프로그램.
 - 새로운 단위를 추가할 때 기존 코드의 변경이 최소화되도록 설계한다.
 - 각 단위 변환 로직은 테스트 코드로 검증한다.
 
+### Mom Test 배경 (STEP 1)
+
+**진짜 문제:** 입력 오타(콜론 누락, 공백, 잘못된 단위)로 변환이 에러 없이 끊기면, 30분 넘는 수동 추적·재작업과 메모장 검사·복붙 같은 우회 루틴이 반복된다.
+
+**구현 목표:** 조용한 실패를 없애기 위해, 잘못된 입력마다 즉시 원인을 알려주는 검증과 정확한 길이 단위 변환을 구현한다.
+
+### 문서
+
+| 문서 | 설명 |
+|------|------|
+| [docs/PRD.md](./docs/PRD.md) | 제품 요구사항 초안 (R-G-I-O, 성공 기준, 범위) |
+| [Report/Mom_Test_Report_STEP1.md](./Report/Mom_Test_Report_STEP1.md) | Mom Test STEP 1 인터뷰 보고서 |
+| [Report/Mom_Test_Workbook_Report_STEP1.md](./Report/Mom_Test_Workbook_Report_STEP1.md) | Mom Test STEP 1 워크북 보고서 |
+| [Prompting/Mom_Test_Transcript_STEP1.md](./Prompting/Mom_Test_Transcript_STEP1.md) | Mom Test STEP 1 인터뷰 Transcript |
+| [Prompting/Mom_Test_Workbook_Transcript_STEP1.md](./Prompting/Mom_Test_Workbook_Transcript_STEP1.md) | Mom Test STEP 1 워크북 Transcript |
+
 ### 가상환경 설정 및 실행
+
 ```bash
 # 가상환경 생성
 python -m venv venv
@@ -25,6 +44,7 @@ deactivate
 ```
 
 ### 기본 요구사항
+
 1. 사용자 입력 예시:
    ```
    meter:2.5
@@ -46,38 +66,47 @@ deactivate
 4. 각 단위 간 변환이 정확히 계산되도록 테스트 코드를 작성할 것.
 
 ### 비즈니스 로직
+
 - `1 meter = 3.28084 feet`
 - `1 meter = 1.09361 yard`
 - feet/yard 간의 비율은 meter 기반으로 계산.
 
 ### 품질 요구사항
+
 - OCP를 만족하는 설계
 - SRP를 만족하는 클래스 구성
 - 입력 값 검증 (음수, 잘못된 형식, 없는 단위)
+- **조용한 실패 금지** — 오류 시 명확한 메시지 출력 (Mom Test SC-1, SC-2)
 
-### 추가 요구사항
-- **설정 외부화**
-   - 변환 비율을 외부 설정 파일(JSON/YAML)에서 로드
-- **동적으로 단위와 비율을 등록할 수 있도록 한다**
-   - 사용자 입력으로 `1 cubit = 0.4572 meter`를 등록하고 사용 가능
-- **출력 포맷 선택 기능** 
-   - JSON / CSV / 표 형태 출력
+### 성공 기준 (STEP 1 워크북)
 
+| ID | 기준 |
+|----|------|
+| SC-1 | 콜론 누락·공백 입력 시 명확한 오류 메시지 (조용히 뻗지 않음) |
+| SC-2 | 오류 메시지만으로 몇 초 안에 원인 특정 |
+| SC-3 | 정상·오류 케이스 테스트 코드 자동 검증 |
+
+### 추가 요구사항 (Out of Scope — STEP 1 워크북)
+
+- **설정 외부화** — 변환 비율을 외부 설정 파일(JSON/YAML)에서 로드
+- **동적 단위 등록** — `1 cubit = 0.4572 meter` 등록 및 사용
+- **출력 포맷 선택** — JSON / CSV / 표 형태 출력
 
 ## 생성형AI를 활용한 Activities (6 시간)
 
 1. 문제 코드 및 기본 요구사항 분석 (0.5시간)
    - 기본 코드구조, 로직 이해
+   - Mom Test 인터뷰 및 PRD 초안 작성
 2. 기본 요구사항 및 품질 요구사항 구현 (2시간)
-   - OCP를 만족하는 인터페이스 구현 
-   - SRP를 만족하도록 클래스 구현 
+   - OCP를 만족하는 인터페이스 구현
+   - SRP를 만족하도록 클래스 구현
    - 입력값 검증을 위한 구현
 3. TC 구현 (0.5시간)
-   - 단위변환 기능 검증 및 입력 값 검증 TC 작성 
+   - 단위변환 기능 검증 및 입력 값 검증 TC 작성
 4. 추가 요구사항 구현 (2시간)
-   - 3개 요구사항 구현 및 TC 작성 
+   - 3개 요구사항 구현 및 TC 작성
 5. 회고 및 발표 (1시간)
    - 실습 목표와 달성도
    - AI를 어떻게 활용했나? 도움이 된 순간과 한계는?
-   - TC를 추가해보면서 개선에 미친 영향, TC 작성 팁
+   - TC를 추가보면서 개선에 미친 영향, TC 작성 팁
    - 클린코드와 리팩토링에서 느낀 장점과 어려운점
