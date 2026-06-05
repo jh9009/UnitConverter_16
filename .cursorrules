@@ -1,0 +1,99 @@
+# UnitConverter_16 — Cursor Rules (ECB + Dual-Track TDD)
+
+## 프로젝트 개요
+
+- 길이 단위 변환기: 터미널 한 줄 입력 `단위:값` (예: `meter:2.5`)
+- 지원 단위: meter, feet, yard
+- Mom Test 핵심: 조용한 실패(에러 메시지 없는 종료) 절대 금지. 오류 시 즉시 원인이 드러나는 메시지 출력
+- 상세 요구: `docs/PRD.md` 참조
+
+## 도메인 규칙
+
+- 입력 형식: `unit:value` (콜론 1개, 단위·값 비어 있지 않음)
+- 오류 케이스 예: `meter 9.1`(콜론 누락), `meter:`, `:2.5`, `feet:abc`, `inch:1.0`, `meter:-1`
+- 성공처럼 보이는 출력(`Done.` 등) 후 묵살 종료 금지
+- **모든 오류 경로는 종료 전 반드시** `[코드] + 사람이 읽을 수 있는 설명 + (가능하면) 받은 입력`을 boundary를 통해 출력. 메시지 없이 return/exit 금지
+- 에러 코드는 boundary/control에서 부여·출력. entity는 에러 코드·I/O 모름
+
+### 에러 코드 (boundary/control 전용)
+
+| 코드 | 의미 | 예시 입력 |
+|------|------|-----------|
+| E001 | 파싱 오류 (형식·공백·숫자 아님) | `feet 5.8`, `meter:abc` |
+| E002 | 미지원 단위 | `inch:1.0` |
+| E003 | 음수 | `meter:-1` |
+
+## ECB 아키텍처
+
+```
+boundary (입력·출력·에러 표시)
+    ↓
+control (흐름 조율·검증·에러 코드 매핑)
+    ↓
+entity (순수 변환 로직·도메인 타입)
+```
+
+- 의존 방향: boundary → control → entity (순방향만)
+- **import 금지 (역방향·우회 차단):**
+  - entity → `{control, boundary}` 금지
+  - control → `boundary` 금지
+  - boundary → `entity` 금지 (boundary는 control만 import, entity 직접 접근 금지)
+- entity: 순수 함수·도메인 객체만
+- control: entity 호출·검증 조율. I/O 직접 수행 금지
+- boundary: 터미널 I/O·사용자 메시지 포맷. 변환 계산 직접 수행 금지
+
+### 디렉터리
+
+- 소스: `src/boundary/`, `src/control/`, `src/entity/`
+- 테스트: `tests/boundary/`, `tests/control/`, `tests/entity/`
+
+## Dual-Track TDD
+
+| Track | 대상 | Mock |
+|-------|------|------|
+| Logic | entity, control | Domain Mock 금지 — 실제 도메인·변환 로직 사용 |
+| UI | boundary | control/입출력 Mock 허용 |
+
+- Logic Track(`tests/entity/`, `tests/control/`)에서는 entity·도메인 타입 Mock 금지
+- **control 테스트도 반드시 실제 entity를 사용** (entity Mock으로 RED 우회 금지)
+
+### 테스트 명명
+
+- Logic Track: ID `D-*`, 파일 `test_d_*.py` → `tests/entity/`, `tests/control/`
+- UI Track: ID `U-*`, 파일 `test_u_*.py` → `tests/boundary/`
+- 테스트 함수 docstring 또는 주석에 ID 명시 (예: `D-01`, `U-03`)
+
+## TDD 사이클
+
+- RED → GREEN → REFACTOR 순서 준수
+- RED: 실패하는 테스트 먼저. 구현 선행 금지
+- GREEN: 테스트 통과에 필요한 최소 코드만
+- REFACTOR: 통과 유지하며 ECB·SRP 정리
+- 금지: assert 완화, `@pytest.mark.skip`, `xfail`로 RED 우회
+
+## SSOT (단위 변환 상수)
+
+- 변환 비율은 단일 모듈에서만 정의 (예: `src/entity/constants.py` — 구현 시)
+- `1 meter = 3.28084 feet`, `1 meter = 1.09361 yard`
+- 테스트·entity·control에 매직 넘버 산재 금지. SSOT import 사용
+
+## 코드 품질
+
+- OCP: 단위 추가 시 entity 확장 위주, 기존 코드 최소 변경
+- SRP: 파싱·검증·변환·출력 책임 분리
+- 변경 범위 최소화: 요청·테스트가 가리키는 레이어만 수정
+
+## AI 행동 규칙
+
+- 항상 한국어로 응답
+- TDD 작업 시 매 응답 상단에 선언:
+  `Phase: [RED/GREEN/REFACTOR] | Layer: [E/C/B] | Track: [Logic/UI]`
+- git commit은 사용자가 명시적으로 요청할 때만 수행
+- Harness·Rule 범위 밖(GUI, JSON 설정, 동적 단위 등록)은 PRD Out of Scope — 제안만 하고 구현 금지
+
+## 실행
+
+```bash
+python -m pytest          # Dual-Track 테스트
+python UnitConverter.py   # 레거시 진입점 (리팩토링 후 boundary 연동)
+```
